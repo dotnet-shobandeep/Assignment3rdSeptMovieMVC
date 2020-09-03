@@ -1,0 +1,56 @@
+﻿@model IEnumerable<MovieCustomerMvcAppWithAuthentication.Models.Movie>
+@{
+    ViewBag.Title = "MovInd";
+}
+
+<h2>Movies Details</h2>
+@Html.ActionLink("NewMovie", "Create", "Movies", null, new { @class = "btn btn-success" })
+
+@if (!Model.Any())
+{
+    <p>No Movies Yet</p>
+}
+else
+{
+    <table id="movTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>MovieName</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var movie in Model)
+            {
+            <tr>
+                <td>@Html.ActionLink(movie.Name, "MovDetails", "Movies", new { id = movie.Id }, null)</td>
+                <td>@Html.ActionLink("Edit", "Edit", new { id = movie.Id }, new { @class = "btn btn-success" })</td>
+                <td>@Html.ActionLink("Delete", "DeleteM", new { id = movie.Id }, new { @class = "btn btn-success" })</td>
+                <td>
+                    <button data-movie-id="@movie.Id" class="btn btn-danger js-delete">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+}
+@section scripts
+    {
+    <script>
+        $(document).ready(function () {
+            $('#movTable .js-delete').on('click', function () {
+                let btn = $(this)
+                if (confirm("Are you sure you want to delete this customer?")) {
+                    $.ajax({
+                        url: '/api/movies/' + $(this).attr('data-movie-id'),
+                        method: 'DELETE',
+                        success: function () {
+                            //console.log("Delete Success....")
+                            btn.parents('tr').remove()
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+    }
